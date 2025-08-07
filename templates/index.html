@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SmartLearn Chat - Enhanced Learning Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #6c63ff, #4834d4);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .main-content {
+            display: flex;
+            height: 600px;
+        }
+
+        .sidebar {
+            width: 300px;
+            background: #f8f9ff;
+            border-right: 1px solid #e0e0e0;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #chatBox {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: white;
+        }
+
+        .input-area {
+            padding: 20px;
+            background: #f8f9ff;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .section-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #4834d4;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #6c63ff;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .action-btn {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .quiz-btn {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .quiz-btn:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+
+        .notes-btn {
+            background: #4ecdc4;
+            color: white;
+        }
+
+        .notes-btn:hover {
+            background: #26c6da;
+            transform: translateY(-2px);
+        }
+
+        .explain-btn {
+            background: #45b7d1;
+            color: white;
+        }
+
+        .explain-btn:hover {
+            background: #3498db;
+            transform: translateY(-2px);
+        }
+
+        .practice-btn {
+            background: #f9ca24;
+            color: #333;
+        }
+
+        .practice-btn:hover {
+            background: #f0932b;
+            transform: translateY(-2px);
+        }
+
+        .subject-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 25px;
+        }
+
+        .subject-btn {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.85em;
+            text-align: center;
+        }
+
+        .subject-btn:hover {
+            border-color: #6c63ff;
+            background: #f0f0ff;
+        }
+
+        .subject-btn.active {
+            border-color: #6c63ff;
+            background: #6c63ff;
+            color: white;
+        }
+
+        .difficulty-selector {
+            margin-bottom: 20px;
+        }
+
+        .difficulty-options {
+            display: flex;
+            gap: 5px;
+        }
+
+        .difficulty-btn {
+            flex: 1;
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            background: white;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.3s;
+        }
+
+        .difficulty-btn.easy:hover, .difficulty-btn.easy.active {
+            border-color: #2ecc71;
+            background: #2ecc71;
+            color: white;
+        }
+
+        .difficulty-btn.medium:hover, .difficulty-btn.medium.active {
+            border-color: #f39c12;
+            background: #f39c12;
+            color: white;
+        }
+
+        .difficulty-btn.hard:hover, .difficulty-btn.hard.active {
+            border-color: #e74c3c;
+            background: #e74c3c;
+            color: white;
+        }
+
+        .search-section {
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #6c63ff;
+        }
+
+        .search-btn {
+            width: 100%;
+            padding: 10px;
+            background: #6c63ff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s;
+        }
+
+        .search-btn:hover {
+            background: #574fbd;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .bot {
+            font-weight: bold;
+            color: #6c63ff;
+        }
+
+        .bot-response {
+            margin-top: 8px;
+            padding: 15px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #f8f9ff, #f0f0ff);
+            border-left: 4px solid #6c63ff;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        #msg {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        #msg:focus {
+            outline: none;
+            border-color: #6c63ff;
+        }
+
+        .send-btn {
+            padding: 12px 25px;
+            background: #6c63ff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s;
+        }
+
+        .send-btn:hover {
+            background: #574fbd;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 10px;
+            color: #666;
+            font-style: italic;
+        }
+
+        pre {
+            background-color: #f4f4f4;
+            padding: 12px;
+            border-radius: 6px;
+            overflow-x: auto;
+            border-left: 3px solid #6c63ff;
+        }
+
+        .quick-prompts {
+            margin-bottom: 20px;
+        }
+
+        .prompt-item {
+            padding: 8px 12px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.3s;
+        }
+
+        .prompt-item:hover {
+            background: #f0f0ff;
+            border-color: #6c63ff;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .subject-grid {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+    </style>
+
+    <!-- Include Showdown.js for Markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>SmartLearn</h1>
+            <p>Your AI-Powered Learning Companion</p>
+        </div>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <!-- Quick Actions -->
+                <div class="section-title">Quick Actions</div>
+                <div class="quick-actions">
+                    <button class="action-btn quiz-btn" onclick="startQuiz()">📝 Take Quiz</button>
+                    <button class="action-btn notes-btn" onclick="searchNotes()">📚 Find Notes</button>
+                    <button class="action-btn explain-btn" onclick="explainTopic()">💡 Explain Topic</button>
+                    <button class="action-btn practice-btn" onclick="startPractice()">🎯 Practice Problems</button>
+                </div>
+
+                <!-- Subject Selection -->
+                <div class="section-title">Subjects</div>
+                <div class="subject-grid">
+                    <button class="subject-btn" data-subject="mathematics">Math</button>
+                    <button class="subject-btn" data-subject="physics">Physics</button>
+                    <button class="subject-btn" data-subject="chemistry">Chemistry</button>
+                    <button class="subject-btn" data-subject="biology">Biology</button>
+                    <button class="subject-btn" data-subject="computer-science">CS</button>
+                    <button class="subject-btn" data-subject="history">History</button>
+                    <button class="subject-btn" data-subject="english">English</button>
+                    <button class="subject-btn" data-subject="geography">Geography</button>
+                </div>
+
+                <!-- Difficulty Level -->
+                <div class="section-title">Difficulty Level</div>
+                <div class="difficulty-selector">
+                    <div class="difficulty-options">
+                        <button class="difficulty-btn easy active" data-difficulty="beginner">Easy</button>
+                        <button class="difficulty-btn medium" data-difficulty="intermediate">Medium</button>
+                        <button class="difficulty-btn hard" data-difficulty="advanced">Hard</button>
+                    </div>
+                </div>
+
+                <!-- Online Search -->
+                <div class="section-title">Search Online Resources</div>
+                <div class="search-section">
+                    <input type="text" class="search-input" id="searchTopic" placeholder="Enter topic to search...">
+                    <button class="search-btn" onclick="searchOnlineResources()">🔍 Search Free Resources</button>
+                </div>
+
+                <!-- Quick Prompts -->
+                <div class="section-title">Quick Prompts</div>
+                <div class="quick-prompts">
+                    <div class="prompt-item" onclick="setPrompt('Summarize this topic in simple terms')">📋 Summarize Topic</div>
+                    <div class="prompt-item" onclick="setPrompt('Create a detailed study plan for')">📅 Create Study Plan</div>
+                    <div class="prompt-item" onclick="setPrompt('Give me practice questions on')">❓ Practice Questions</div>
+                    <div class="prompt-item" onclick="setPrompt('Explain like I am 10 years old')">👶 Simple Explanation</div>
+                    <div class="prompt-item" onclick="setPrompt('Create flashcards for')">🎴 Make Flashcards</div>
+                    <div class="prompt-item" onclick="setPrompt('What are the prerequisites for learning')">📚 Prerequisites</div>
+                    <div class="prompt-item" onclick="setPrompt('Give me real-world examples of')">🌍 Real Examples</div>
+                    <div class="prompt-item" onclick="setPrompt('Create a mind map for')">🗺️ Mind Map</div>
+                </div>
+
+                <!-- Learning Tools -->
+                <div class="section-title">Learning Tools</div>
+                <div class="quick-prompts">
+                    <div class="prompt-item" onclick="generateStudySchedule()">⏰ Study Schedule</div>
+                    <div class="prompt-item" onclick="createMemoryTricks()">🧠 Memory Tricks</div>
+                    <div class="prompt-item" onclick="findYouTubeChannels()">📺 YouTube Channels</div>
+                    <div class="prompt-item" onclick="getCareerInfo()">💼 Career Connections</div>
+                </div>
+            </div>
+
+            <div class="chat-area">
+                <div id="chatBox">
+                    <div class="message bot">
+                        <span class="bot">SmartLearn:</span>
+                        <div class="bot-response">
+                            👋 Welcome to SmartLearn! I'm your AI learning assistant. Here's how I can help you:
+                            <br><br>
+                            • <strong>Take Quizzes:</strong> Test your knowledge on any subject
+                            • <strong>Find Notes:</strong> Search for free educational resources online
+                            • <strong>Explain Topics:</strong> Get clear explanations of complex concepts
+                            • <strong>Practice Problems:</strong> Work through practice questions
+                            <br><br>
+                            Use the sidebar buttons for quick access, or just type your questions below! 🚀
+                        </div>
+                    </div>
+                </div>
+
+                <div class="typing-indicator" id="typingIndicator">
+                    SmartLearn is typing...
+                </div>
+
+                <div class="input-area">
+                    <div class="input-container">
+                        <input type="text" id="msg" placeholder="Ask a question or describe what you want to learn..." onkeydown="if(event.key==='Enter'){sendMessage();}">
+                        <button class="send-btn" onclick="sendMessage()">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedSubject = '';
+        let selectedDifficulty = 'beginner';
+        const converter = new showdown.Converter();
+
+        // Initialize event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Subject selection
+            document.querySelectorAll('.subject-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.subject-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedSubject = this.dataset.subject;
+                });
+            });
+
+            // Difficulty selection
+            document.querySelectorAll('.difficulty-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.difficulty-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedDifficulty = this.dataset.difficulty;
+                });
+            });
+        });
+
+        async function sendMessage() {
+            let msg = document.getElementById('msg').value.trim();
+            if (!msg) return;
+
+            showTypingIndicator();
+            addMessageToChat('You', msg, 'user');
+            document.getElementById('msg').value = "";
+
+            try {
+                let res = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ message: msg })
+                });
+
+                let data = await res.json();
+                hideTypingIndicator();
+
+                if (data.reply) {
+                    let markdownHTML = converter.makeHtml(data.reply);
+                    addMessageToChat('SmartLearn', markdownHTML, 'bot', true);
+                } else {
+                    addMessageToChat('SmartLearn', 'Sorry, I encountered an error. Please try again.', 'bot');
+                }
+            } catch (error) {
+                hideTypingIndicator();
+                addMessageToChat('SmartLearn', 'Sorry, there was a connection error. Please try again.', 'bot');
+            }
+        }
+
+        function addMessageToChat(sender, message, type, isHTML = false) {
+            let chatBox = document.getElementById('chatBox');
+            let messageDiv = document.createElement('div');
+            messageDiv.className = 'message ' + type;
+
+            if (isHTML) {
+                messageDiv.innerHTML = `<span class="${type}">${sender}:</span><div class="bot-response">${message}</div>`;
+            } else {
+                messageDiv.innerHTML = `<span class="${type}">${sender}:</span><div class="bot-response">${message}</div>`;
+            }
+
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'block';
+            document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'none';
+        }
+
+        function startQuiz() {
+            if (!selectedSubject) {
+                alert('Please select a subject first!');
+                return;
+            }
+
+            const prompt = `Create a ${selectedDifficulty} level quiz on ${selectedSubject.replace('-', ' ')} with 5 multiple choice questions. Format it nicely with clear options A, B, C, D for each question. Don't show answers yet - I'll ask for them after I attempt the quiz.`;
+            document.getElementById('msg').value = prompt;
+            sendMessage();
+        }
+
+        function searchNotes() {
+            if (!selectedSubject) {
+                alert('Please select a subject first!');
+                return;
+            }
+
+            const prompt = `Find and recommend free online educational resources, notes, and study materials for ${selectedSubject.replace('-', ' ')} at ${selectedDifficulty} level. Include websites, PDFs, video tutorials, and other helpful learning materials that are freely available.`;
+            document.getElementById('msg').value = prompt;
+            sendMessage();
+        }
+
+        function explainTopic() {
+            const topic = prompt('What topic would you like me to explain?');
+            if (topic) {
+                const level = selectedDifficulty === 'beginner' ? 'simple terms' : selectedDifficulty === 'intermediate' ? 'moderate detail' : 'comprehensive detail';
+                const prompt_text = `Explain "${topic}" in ${level}. Make it easy to understand with examples and break it down step by step.`;
+                document.getElementById('msg').value = prompt_text;
+                sendMessage();
+            }
+        }
+
+        function startPractice() {
+            if (!selectedSubject) {
+                alert('Please select a subject first!');
+                return;
+            }
+
+            const prompt = `Give me 3 practice problems for ${selectedSubject.replace('-', ' ')} at ${selectedDifficulty} level. Include step-by-step solutions and explanations for each problem.`;
+            document.getElementById('msg').value = prompt;
+            sendMessage();
+        }
+
+        function searchOnlineResources() {
+            const topic = document.getElementById('searchTopic').value.trim();
+            if (!topic) {
+                alert('Please enter a topic to search for!');
+                return;
+            }
+
+            const prompt = `Search for free online educational resources about "${topic}". Find study notes, tutorials, practice materials, videos, and other learning resources that are available for free. Provide direct links and descriptions of what each resource offers.`;
+            document.getElementById('msg').value = prompt;
+            document.getElementById('searchTopic').value = '';
+            sendMessage();
+        }
+
+        function setPrompt(promptText) {
+            document.getElementById('msg').value = promptText + ' ';
+            document.getElementById('msg').focus();
+        }
+
+        function generateStudySchedule() {
+            const topic = prompt('What subject/topic do you want to create a study schedule for?');
+            if (topic) {
+                const timeAvailable = prompt('How many hours per week can you dedicate to studying? (e.g., 5)');
+                const duration = prompt('How many weeks do you want to study this? (e.g., 4)');
+
+                const prompt_text = `Create a detailed ${duration || 4}-week study schedule for "${topic}". I can study ${timeAvailable || 5} hours per week. Include daily breakdown, specific topics to cover each day, recommended study methods, and progress milestones. Make it realistic and achievable.`;
+                document.getElementById('msg').value = prompt_text;
+                sendMessage();
+            }
+        }
+
+        function createMemoryTricks() {
+            const topic = prompt('What topic do you need memory tricks/mnemonics for?');
+            if (topic) {
+                const prompt_text = `Create memory tricks, mnemonics, acronyms, and memorization techniques for "${topic}". Include visual associations, word play, rhymes, and any other creative methods to help remember key concepts, formulas, or facts.`;
+                document.getElementById('msg').value = prompt_text;
+                sendMessage();
+            }
+        }
+
+        function findYouTubeChannels() {
+            if (!selectedSubject) {
+                alert('Please select a subject first!');
+                return;
+            }
+
+            const prompt_text = `Recommend the best YouTube educational channels and specific playlists for learning ${selectedSubject.replace('-', ' ')} at ${selectedDifficulty} level. Include channel names, what makes each channel special, and specific video series or playlists to follow. Focus on channels with high-quality, engaging content.`;
+            document.getElementById('msg').value = prompt_text;
+            sendMessage();
+        }
+
+        function getCareerInfo() {
+            if (!selectedSubject) {
+                alert('Please select a subject first!');
+                return;
+            }
+
+            const prompt_text = `Explain how ${selectedSubject.replace('-', ' ')} connects to real-world careers and jobs. What careers use this subject? What skills from this subject are valuable in the workplace? Include salary information, job growth prospects, and specific examples of how this knowledge is applied professionally.`;
+            document.getElementById('msg').value = prompt_text;
+            sendMessage();
+        }
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            // Ctrl/Cmd + Enter to send message
+            if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+                sendMessage();
+            }
+
+            // Ctrl/Cmd + Q for quick quiz
+            if ((event.ctrlKey || event.metaKey) && event.key === 'q') {
+                event.preventDefault();
+                startQuiz();
+            }
+
+            // Ctrl/Cmd + S for search notes
+            if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+                event.preventDefault();
+                searchNotes();
+            }
+        });
+
+        // Auto-save user preferences
+        function savePreferences() {
+            const prefs = {
+                selectedSubject: selectedSubject,
+                selectedDifficulty: selectedDifficulty
+            };
+            // Note: In a real implementation, you might want to save to server
+            console.log('Preferences saved:', prefs);
+        }
+
+        // Add some UI enhancements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add tooltips to buttons
+            const tooltips = {
+                '.quiz-btn': 'Generate practice quizzes for your selected subject',
+                '.notes-btn': 'Find free educational resources and study materials online',
+                '.explain-btn': 'Get detailed explanations of complex topics',
+                '.practice-btn': 'Work through practice problems with step-by-step solutions'
+            };
+
+            Object.entries(tooltips).forEach(([selector, tooltip]) => {
+                const element = document.querySelector(selector);
+                if (element) {
+                    element.title = tooltip;
+                }
+            });
+
+            // Add smooth scrolling animation when new messages are added
+            const chatBox = document.getElementById('chatBox');
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                        chatBox.scrollTo({
+                            top: chatBox.scrollHeight,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            observer.observe(chatBox, { childList: true });
+        });
+    </script>
+</body>
+</html>
