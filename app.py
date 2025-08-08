@@ -1,4 +1,4 @@
-# app.py
+import os
 from flask import Flask, render_template, request, jsonify
 from chatbot import ask_bot
 
@@ -17,4 +17,7 @@ def chat():
     return jsonify({'reply': reply})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Grab the port Render assigns, default to 10000 if not set
+    port = int(os.environ.get("PORT", 10000))
+    # Listen on all interfaces so Render’s load balancer can reach it
+    app.run(host="0.0.0.0", port=port)
