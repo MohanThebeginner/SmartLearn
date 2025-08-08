@@ -1,22 +1,32 @@
 # chatbot.py
+import os
+from dotenv import load_dotenv
 import google.generativeai as genai
 
-# Configure Gemini API
-genai.configure(api_key="AIzaSyA0Xi13r8ww8DcW5BkiDbBn_JYdaxAD034")  # Replace with your actual API key
+# Load variables from .env file
+load_dotenv()
+
+# Get API key from environment variable
+api_key = os.getenv("GEMINI_API_KEY")
+
+if not api_key:
+    raise ValueError("GEMINI_API_KEY environment variable not set")
+
+genai.configure(api_key=api_key)
 
 # Use the Gemini model
 model = genai.GenerativeModel('gemini-1.5-flash-latest')
 
+
 def ask_bot(prompt):
     response = model.generate_content(prompt)
-    
-    # Safely extract all text parts
+
     if response and response.candidates:
         text_parts = response.candidates[0].content.parts
         full_text = ""
         for part in text_parts:
             if hasattr(part, 'text'):
-                full_text += part.text + "\n"  # Preserve line breaks
+                full_text += part.text + "\n"
         return full_text.strip()
     else:
         return "No response from model."
